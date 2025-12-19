@@ -1,7 +1,6 @@
 import { NodeSdk } from "@effect/opentelemetry"
 import { InMemorySpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base"
 import { createTRPCClient, createWSClient, httpBatchLink, wsLink } from "@trpc/client"
-import { initTRPC } from "@trpc/server"
 import { Effect, Layer, ManagedRuntime } from "effect"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import * as z from "zod"
@@ -9,7 +8,7 @@ import * as z from "zod"
 import type { AppRouter } from "../src/server.js"
 import { startServer } from "../src/server.js"
 import type { AnyEffectMutationProcedure, EffectQueryProcedure } from "../src/trpcWrapper.js"
-import { makeEffectTRPC } from "../src/trpcWrapper.js"
+import { initEffectTRPC } from "../src/trpcWrapper.js"
 
 // ----------------------------------------------------------------------------
 // Unit Tests - Effect Procedure Types and Router
@@ -17,7 +16,7 @@ import { makeEffectTRPC } from "../src/trpcWrapper.js"
 
 // Create a minimal runtime for tests that don't need services
 const testRuntime = ManagedRuntime.make(Layer.empty)
-const t = makeEffectTRPC(initTRPC.create(), testRuntime)
+const t = initEffectTRPC.create({ runtime: testRuntime })
 
 describe("makeEffectTRPC", () => {
   describe("t.effect types", () => {
@@ -193,7 +192,7 @@ describe("makeEffectTRPC", () => {
       const CounterLive = Layer.succeed(Counter, { value: 42 })
       const customRuntime = ManagedRuntime.make(CounterLive)
 
-      const custom = makeEffectTRPC(initTRPC.create(), customRuntime)
+      const custom = initEffectTRPC.create({ runtime: customRuntime })
 
       const router = custom.router({
         getCounter: custom.effect.query(function*() {
@@ -221,7 +220,7 @@ describe("makeEffectTRPC", () => {
         getValue: () => Effect.succeed(100)
       })
       const customRuntime = ManagedRuntime.make(ServiceLive)
-      const custom = makeEffectTRPC(initTRPC.create(), customRuntime)
+      const custom = initEffectTRPC.create({ runtime: customRuntime })
 
       // This compiles - ProvidedService is in the runtime
       const validRouter = custom.router({
@@ -275,7 +274,7 @@ describe("makeEffectTRPC", () => {
       })
 
       const customRuntime = ManagedRuntime.make(UserServiceLive)
-      const custom = makeEffectTRPC(initTRPC.create(), customRuntime)
+      const custom = initEffectTRPC.create({ runtime: customRuntime })
 
       const router = custom.router({
         users: {
@@ -343,7 +342,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     const router = traced.router({
       hello: traced.effect.query(function*() {
@@ -372,7 +371,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     const router = traced.router({
       users: {
@@ -413,7 +412,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     let capturedSpanName: string | null = null
 
@@ -441,7 +440,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     const router = traced.router({
       withChildSpan: traced.effect.query(function*() {
@@ -487,7 +486,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     const router = traced.router({
       createItem: traced.effect
@@ -517,7 +516,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     class MyCustomError extends Error {
       readonly _tag = "MyCustomError"
@@ -588,7 +587,7 @@ describe("Tracing", () => {
     })))
 
     const tracingRuntime = ManagedRuntime.make(TracingLive)
-    const traced = makeEffectTRPC(initTRPC.create(), tracingRuntime)
+    const traced = initEffectTRPC.create({ runtime: tracingRuntime })
 
     const router = traced.router({
       nestedError: traced.effect.query(function*() {

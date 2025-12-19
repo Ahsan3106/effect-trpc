@@ -1,4 +1,3 @@
-import { initTRPC } from "@trpc/server"
 import { createHTTPServer } from "@trpc/server/adapters/standalone"
 import { applyWSSHandler } from "@trpc/server/adapters/ws"
 import { Effect, Layer, ManagedRuntime } from "effect"
@@ -7,13 +6,13 @@ import { WebSocketServer } from "ws"
 import * as z from "zod"
 
 import { db, ee, type User } from "./db.js"
-import { makeEffectTRPC } from "./trpcWrapper.js"
+import { initEffectTRPC } from "./trpcWrapper.js"
 
 // Create a runtime for the server (empty layer for this demo)
 const serverRuntime = ManagedRuntime.make(Layer.empty)
 
 // Create Effect-aware tRPC instance
-const t = makeEffectTRPC(initTRPC.create(), serverRuntime)
+const t = initEffectTRPC.create({ runtime: serverRuntime })
 
 export const appRouter = t.router({
   // Standard tRPC procedure

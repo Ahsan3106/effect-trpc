@@ -1,9 +1,9 @@
 import type { AnyTRPCProcedure, AnyTRPCRouter, TRPCProcedureBuilder, TRPCRouterRecord } from "@trpc/server"
+import { initTRPC } from "@trpc/server"
 import type { Lazy, Parser, ProcedureType, UnsetMarker } from "@trpc/server/unstable-core-do-not-import"
 import { Effect } from "effect"
 import type { ManagedRuntime } from "effect"
 import type { YieldWrap } from "effect/Utils"
-import { _parse } from "zod/v4/core"
 
 // Symbol to mark Effect procedures
 const EffectProcedureSymbol: unique symbol = Symbol.for("@trpc-effect/EffectProcedure") as any
@@ -567,88 +567,174 @@ export interface EffectTRPC<TContext extends object, TMeta extends object, TRequ
 }
 
 /**
- * The shape of an initTRPC.create() result that we can wrap
+ * Options for creating an Effect-aware tRPC instance.
+ * Extends the standard tRPC create options with a required runtime.
+ *
+ * @typeParam R - The Effect requirements provided by the ManagedRuntime
  */
-interface TRPCInstance<TContext extends object, TMeta extends object> {
-  procedure: TRPCProcedureBuilder<
-    TContext,
-    TMeta,
-    object,
-    UnsetMarker,
-    UnsetMarker,
-    UnsetMarker,
-    UnsetMarker,
-    false
-  >
-  router: (procedures: TRPCRouterRecord) => AnyTRPCRouter
+export interface EffectTRPCCreateOptions<R> {
+  /**
+   * The ManagedRuntime that provides services for Effect procedures.
+   * All Effect procedures in the router will use this runtime.
+   */
+  readonly runtime: ManagedRuntime.ManagedRuntime<R, never>
+
+  /**
+   * Use a data transformer
+   * @see https://trpc.io/docs/v11/data-transformers
+   */
+  readonly transformer?: unknown
+
+  /**
+   * Custom error formatter
+   * @see https://trpc.io/docs/v11/error-formatting
+   */
+  readonly errorFormatter?: unknown
+
+  /**
+   * Default meta for all procedures
+   */
+  readonly defaultMeta?: unknown
+
+  /**
+   * Is this running on the server?
+   * @default true
+   */
+  readonly isServer?: boolean
+
+  /**
+   * Is development mode?
+   * @default process.env.NODE_ENV !== 'production'
+   */
+  readonly isDev?: boolean
+
+  /**
+   * Allow usage outside of server
+   * @default false
+   */
+  readonly allowOutsideOfServer?: boolean
 }
 
 /**
- * Wrap a tRPC instance (from initTRPC.create()) with Effect support.
- * Requires a ManagedRuntime to provide the Effect services.
+ * Builder class for creating an Effect-aware tRPC instance.
+ * Mirrors the standard tRPC builder pattern with `.context()` and `.meta()` methods.
  *
  * @typeParam TContext - The tRPC context type
  * @typeParam TMeta - The tRPC meta type
- * @typeParam R - The Effect requirements provided by the ManagedRuntime
- *
- * @param trpc - The tRPC instance from initTRPC.create()
- * @param runtime - A ManagedRuntime that provides the services for Effect procedures
- *
- * @example
- * ```ts
- * import { initTRPC } from "@trpc/server"
- * import { Layer, ManagedRuntime } from "effect"
- * import { makeEffectTRPC } from "./trpcWrapper"
- *
- * // Define your services
- * class UserService extends Effect.Tag("UserService")<
- *   UserService,
- *   { findById: (id: string) => Effect.Effect<User | undefined> }
- * >() {}
- *
- * // Create a runtime with your services
- * const AppLayer = Layer.succeed(UserService, {
- *   findById: (id) => Effect.succeed({ id, name: "Alice" })
- * })
- * const runtime = ManagedRuntime.make(AppLayer)
- *
- * // Create Effect-aware tRPC instance
- * const t = makeEffectTRPC(initTRPC.create(), runtime)
- *
- * export const appRouter = t.router({
- *   // Regular tRPC procedure
- *   hello: t.procedure.query(() => "Hello, World!"),
- *
- *   // Effect procedure using services from the runtime
- *   getUser: t.effect
- *     .input(z.object({ id: z.string() }))
- *     .query(function*({ input }) {
- *       const userService = yield* UserService
- *       return yield* userService.findById(input.id)
- *     })
- * })
- * ```
  */
-export function makeEffectTRPC<TContext extends object, TMeta extends object, R>(
-  trpc: TRPCInstance<TContext, TMeta>,
-  runtime: ManagedRuntime.ManagedRuntime<R, never>
-): EffectTRPC<TContext, TMeta, R> {
-  return {
-    procedure: trpc.procedure,
-    effect: makeEffectProcedure<
-      TContext,
-      TMeta,
-      object,
-      UnsetMarker,
-      UnsetMarker,
-      UnsetMarker,
-      UnsetMarker,
-      R
-    >(trpc.procedure),
-    router: <T extends EffectRouterRecord>(procedures: T) => {
-      const wrappedProcedures = wrapProcedures(procedures, runtime, "")
-      const router = trpc.router(wrappedProcedures)
-      return router as any
+class EffectTRPCBuilder<TContext extends object, TMeta extends object> {
+  /**
+   * Add a context shape as a generic to the root object.
+   * @see https://trpc.io/docs/v11/server/context
+   */
+  context<TNewContext extends object>(): EffectTRPCBuilder<TNewContext, TMeta> {
+    return new EffectTRPCBuilder<TNewContext, TMeta>()
+  }
+
+  /**
+   * Add a meta shape as a generic to the root object.
+   * @see https://trpc.io/docs/v11/quickstart
+   */
+  meta<TNewMeta extends object>(): EffectTRPCBuilder<TContext, TNewMeta> {
+    return new EffectTRPCBuilder<TContext, TNewMeta>()
+  }
+
+  /**
+   * Create an Effect-aware tRPC instance.
+   *
+   * @param opts - Options including the ManagedRuntime and standard tRPC options
+   * @returns An EffectTRPC instance with `.procedure`, `.effect`, and `.router`
+   *
+   * @example
+   * ```ts
+   * import { Layer, ManagedRuntime } from "effect"
+   * import { initEffectTRPC } from "./trpcWrapper"
+   *
+   * // Define your services
+   * class UserService extends Effect.Tag("UserService")<
+   *   UserService,
+   *   { findById: (id: string) => Effect.Effect<User | undefined> }
+   * >() {}
+   *
+   * // Create a runtime with your services
+   * const AppLayer = Layer.succeed(UserService, {
+   *   findById: (id) => Effect.succeed({ id, name: "Alice" })
+   * })
+   * const runtime = ManagedRuntime.make(AppLayer)
+   *
+   * // Create Effect-aware tRPC instance
+   * const t = initEffectTRPC.create({ runtime })
+   *
+   * export const appRouter = t.router({
+   *   // Regular tRPC procedure
+   *   hello: t.procedure.query(() => "Hello, World!"),
+   *
+   *   // Effect procedure using services from the runtime
+   *   getUser: t.effect
+   *     .input(z.object({ id: z.string() }))
+   *     .query(function*({ input }) {
+   *       const userService = yield* UserService
+   *       return yield* userService.findById(input.id)
+   *     })
+   * })
+   * ```
+   */
+  create<R>(opts: EffectTRPCCreateOptions<R>): EffectTRPC<TContext, TMeta, R> {
+    const { runtime, ...trpcOptions } = opts
+    const trpc = initTRPC.create(trpcOptions as any)
+
+    return {
+      procedure: trpc.procedure as unknown as TRPCProcedureBuilder<
+        TContext,
+        TMeta,
+        object,
+        UnsetMarker,
+        UnsetMarker,
+        UnsetMarker,
+        UnsetMarker,
+        false
+      >,
+      effect: makeEffectProcedure<
+        TContext,
+        TMeta,
+        object,
+        UnsetMarker,
+        UnsetMarker,
+        UnsetMarker,
+        UnsetMarker,
+        R
+      >(trpc.procedure as any),
+      router: <T extends EffectRouterRecord>(procedures: T) => {
+        const wrappedProcedures = wrapProcedures(procedures, runtime, "")
+        const router = trpc.router(wrappedProcedures)
+        return router as any
+      }
     }
   }
 }
+
+/**
+ * Builder to initialize an Effect-aware tRPC root object.
+ * Use this exactly once per backend.
+ *
+ * @example
+ * ```ts
+ * // Basic usage
+ * const t = initEffectTRPC.create({ runtime: myRuntime })
+ *
+ * // With context
+ * const t = initEffectTRPC
+ *   .context<{ userId: string }>()
+ *   .create({ runtime: myRuntime })
+ *
+ * // With context and meta
+ * const t = initEffectTRPC
+ *   .context<{ userId: string }>()
+ *   .meta<{ authRequired: boolean }>()
+ *   .create({ runtime: myRuntime })
+ * ```
+ *
+ * @see https://trpc.io/docs/v11/quickstart
+ */
+export const initEffectTRPC: EffectTRPCBuilder<object, object> = new EffectTRPCBuilder()
+export type { EffectTRPCBuilder }
